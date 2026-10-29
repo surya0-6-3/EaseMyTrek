@@ -17,7 +17,7 @@ fictional demo treks and bookings. Delete the `data` folder to reset it.
 | Admin | admin@trek.com   | admin123 |
 | User  | user@gmail.com   | user@123 |
 
-These are demo credentials only - change them before any real deployment.
+These are demo credentials only
 
 ## Files
 - `app.py` - routes, login, permissions, demo data
