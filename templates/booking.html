@@ -1,0 +1,29 @@
+{% from "macros.html" import csrf %}
+{% extends "base.html" %}
+{% block title %}Book {{ trek.name }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+<div class="card"><div class="card-body">
+  <h1 class="h4">Book: {{ trek.name }}</h1>
+  <p class="text-muted mb-1">{{ trek.location }} &middot; {{ trek.trek_date }}</p>
+  <p>Price per participant: <strong>{{ trek.price|money }}</strong> &middot; Available slots: <strong>{{ trek.available }}</strong></p>
+
+  {% if blocked_reason %}
+    <div class="alert alert-warning">{{ blocked_reason }}</div>
+    <a href="{{ url_for('trek_details', trek_id=trek.trek_id) }}" class="btn btn-outline-secondary">Back to trek</a>
+  {% else %}
+    <form method="post" novalidate>
+      {{ csrf() }}
+      <div class="mb-3">
+        <label for="participants" class="form-label">Number of participants</label>
+        <input type="number" class="form-control" id="participants" name="participants"
+               min="1" max="{{ [trek.available, 20]|min }}" value="1" required>
+        <div class="form-text">Total price is calculated on the server: participants &times; {{ trek.price|money }}.</div>
+      </div>
+      <button type="submit" class="btn btn-forest">Confirm Booking Request</button>
+      <a href="{{ url_for('trek_details', trek_id=trek.trek_id) }}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+  {% endif %}
+</div></div>
+</div></div>
+{% endblock %}

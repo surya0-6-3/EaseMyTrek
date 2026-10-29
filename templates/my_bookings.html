@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "macros.html" import status_badge, csrf %}
+{% block title %}My Bookings{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">My Bookings</h1>
+
+<form method="get" class="row g-2 mb-3 align-items-end">
+  <div class="col-auto">
+    <label for="status" class="form-label mb-0">Status</label>
+    <select class="form-select" id="status" name="status">
+      <option value="">All</option>
+      {% for s in statuses %}<option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-auto"><button class="btn btn-forest" type="submit">Filter</button></div>
+</form>
+
+{% if bookings %}
+<div class="table-responsive"><table class="table table-bordered bg-white align-middle">
+  <thead class="table-light">
+    <tr><th>ID</th><th>Trek</th><th>Location</th><th>Trek date</th><th>Booked on</th>
+        <th>Participants</th><th>Unit price</th><th>Total</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for b in bookings %}
+    <tr>
+      <td><a href="{{ url_for('booking_detail', booking_id=b.booking_id) }}">#{{ b.booking_id }}</a></td>
+      <td>{{ b.trek_name }}</td><td>{{ b.location }}</td><td>{{ b.trek_date }}</td>
+      <td>{{ b.booking_date }}</td><td>{{ b.participants }}</td>
+      <td>{{ b.unit_price|money }}</td><td>{{ b.total_price|money }}</td>
+      <td>{{ status_badge(b.status) }}</td>
+      <td>
+        {% if b.status != 'Cancelled' and b.trek_date > today %}
+        <form method="post" action="{{ url_for('cancel_booking', booking_id=b.booking_id) }}"
+              onsubmit="return confirm('Cancel this booking?');">
+          {{ csrf() }}
+          <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<div class="alert alert-info">No bookings found{% if status %} with status {{ status }}{% endif %}.</div>
+{% endif %}
+{% endblock %}

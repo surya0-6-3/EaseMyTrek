@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "macros.html" import status_badge %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Welcome, {{ current_user.name }}</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-lg-4">
+    <div class="card text-center"><div class="card-body">
+      <div class="stat-number">{{ active_count }}</div>
+      <div>Active bookings</div>
+    </div></div>
+  </div>
+  <div class="col-sm-6 col-lg-4">
+    <div class="card text-center"><div class="card-body">
+      <div class="stat-number">{{ upcoming|length }}</div>
+      <div>Upcoming treks</div>
+    </div></div>
+  </div>
+  <div class="col-lg-4 d-flex align-items-center">
+    <a href="{{ url_for('treks') }}" class="btn btn-forest">Explore Treks</a>
+  </div>
+</div>
+
+<h2 class="h5">Upcoming Booked Treks</h2>
+{% if upcoming %}
+<div class="table-responsive mb-4"><table class="table table-bordered bg-white align-middle">
+  <thead class="table-light"><tr><th>Trek</th><th>Location</th><th>Date</th><th>Participants</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for b in upcoming %}
+    <tr><td>{{ b.trek_name }}</td><td>{{ b.location }}</td><td>{{ b.trek_date }}</td>
+        <td>{{ b.participants }}</td><td>{{ status_badge(b.status) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<div class="alert alert-info">You have no upcoming booked treks.</div>
+{% endif %}
+
+<h2 class="h5">Recent Bookings</h2>
+{% if recent %}
+<div class="table-responsive"><table class="table table-bordered bg-white align-middle">
+  <thead class="table-light"><tr><th>ID</th><th>Trek</th><th>Booked on</th><th>Participants</th><th>Total</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for b in recent %}
+    <tr><td><a href="{{ url_for('booking_detail', booking_id=b.booking_id) }}">#{{ b.booking_id }}</a></td>
+        <td>{{ b.trek_name }}</td><td>{{ b.booking_date }}</td><td>{{ b.participants }}</td>
+        <td>{{ b.total_price|money }}</td><td>{{ status_badge(b.status) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+<a href="{{ url_for('my_bookings') }}">View all bookings</a>
+{% else %}
+<div class="alert alert-info">No bookings yet. Explore treks to make your first booking.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "macros.html" import difficulty_badge, csrf %}
+{% block title %}Manage Treks{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Manage Treks</h1>
+  <a href="{{ url_for('add_trek') }}" class="btn btn-forest">Add New Trek</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto"><label for="q" class="visually-hidden">Search</label>
+    <input type="text" class="form-control" id="q" name="q" placeholder="Search name or location" value="{{ q }}"></div>
+  <div class="col-auto"><button class="btn btn-forest" type="submit">Search</button></div>
+</form>
+
+{% if treks %}
+<div class="table-responsive"><table class="table table-bordered bg-white align-middle">
+  <thead class="table-light">
+    <tr><th>ID</th><th>Name</th><th>Location</th><th>Difficulty</th><th>Date</th><th>Price</th><th>Reserved / Capacity</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+  {% for t in treks %}
+    <tr>
+      <td>{{ t.trek_id }}</td><td>{{ t.name }}</td><td>{{ t.location }}</td>
+      <td>{{ difficulty_badge(t.difficulty) }}</td>
+      <td>{{ t.trek_date }}{% if t.trek_date < today %} <span class="badge text-bg-secondary">Past</span>{% endif %}</td>
+      <td>{{ t.price|money }}</td><td>{{ t.reserved }} / {{ t.capacity }}</td>
+      <td class="text-nowrap">
+        <a href="{{ url_for('edit_trek', trek_id=t.trek_id) }}" class="btn btn-sm btn-outline-forest">Edit</a>
+        <form method="post" action="{{ url_for('delete_trek', trek_id=t.trek_id) }}" class="d-inline"
+              onsubmit="return confirm('Delete this trek? This cannot be undone.');">
+          {{ csrf() }}
+          <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<div class="alert alert-info">No treks found. Use "Add New Trek" to create the first one.</div>
+{% endif %}
+{% endblock %}

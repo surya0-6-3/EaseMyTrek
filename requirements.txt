@@ -1,0 +1,4 @@
+Flask>=3.0
+pandas>=2.0
+matplotlib>=3.8
+python-dotenv>=1.0

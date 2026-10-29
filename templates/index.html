@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "macros.html" import difficulty_badge %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="p-4 mb-4 bg-white border rounded">
+  <h1 class="text-forest">Welcome to EaseMyTrek</h1>
+  <p class="lead mb-3">
+    EaseMyTrek is a simple trekking management system. Browse trekking packages,
+    check prices, difficulty and available slots, and book your place online.
+  </p>
+  <a class="btn btn-forest" href="{{ url_for('treks') }}">Explore Treks</a>
+</div>
+
+<h2 class="h4 mb-3">Upcoming Treks</h2>
+{% if treks %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3 mb-4">
+  {% for trek in treks %}
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h3 class="h5 card-title">{{ trek.name }}</h3>
+        <p class="mb-1 text-muted">{{ trek.location }}</p>
+        <p class="mb-1">{{ difficulty_badge(trek.difficulty) }} {{ trek.duration_days }} day(s)</p>
+        <p class="mb-1">Date: {{ trek.trek_date }}</p>
+        <p class="mb-3">{{ trek.price|money }} per person</p>
+        <a href="{{ url_for('trek_details', trek_id=trek.trek_id) }}" class="btn btn-sm btn-outline-forest">View Details</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">No upcoming treks have been added yet. Please check back soon.</div>
+{% endif %}
+
+<h2 class="h4 mb-3">How Booking Works</h2>
+<ol>
+  <li>Create a free account and log in.</li>
+  <li>Choose a trek and enter the number of participants.</li>
+  <li>Your booking starts as <strong>Pending</strong>; the administrator confirms it.</li>
+  <li>You can cancel from <strong>My Bookings</strong> any time before the trek date.</li>
+</ol>
+{% endblock %}

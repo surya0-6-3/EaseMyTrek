@@ -1,0 +1,15 @@
+{# Small reusable pieces. Import with: {% from "macros.html" import status_badge %} #}
+{% macro status_badge(status) %}
+  {% if status == 'Pending' %}<span class="badge text-bg-warning">Pending</span>
+  {% elif status == 'Confirmed' %}<span class="badge text-bg-success">Confirmed</span>
+  {% else %}<span class="badge text-bg-secondary">{{ status }}</span>{% endif %}
+{% endmacro %}
+
+{% macro difficulty_badge(level) %}
+  {% if level == 'Easy' %}<span class="badge text-bg-success">Easy</span>
+  {% elif level == 'Moderate' %}<span class="badge text-bg-warning">Moderate</span>
+  {% else %}<span class="badge text-bg-danger">{{ level }}</span>{% endif %}
+{% endmacro %}
+
+{# Hidden field that every POST form must include (CSRF protection) #}
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}

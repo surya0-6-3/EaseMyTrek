@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "macros.html" import status_badge %}
+{% block title %}Booking #{{ booking.booking_id }}{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Booking #{{ booking.booking_id }}</h1>
+<div class="card"><div class="card-body">
+  <table class="table table-sm w-auto mb-3">
+    <tr><th>Trek</th><td>{{ booking.trek_name }}</td></tr>
+    <tr><th>Location</th><td>{{ booking.location }}</td></tr>
+    <tr><th>Trek date</th><td>{{ booking.trek_date }}</td></tr>
+    <tr><th>Booked on</th><td>{{ booking.booking_date }}</td></tr>
+    <tr><th>Participants</th><td>{{ booking.participants }}</td></tr>
+    <tr><th>Unit price</th><td>{{ booking.unit_price|money }}</td></tr>
+    <tr><th>Total price</th><td>{{ booking.total_price|money }}</td></tr>
+    <tr><th>Status</th><td>{{ status_badge(booking.status) }}</td></tr>
+  </table>
+  <a href="{{ url_for('my_bookings') }}" class="btn btn-outline-secondary">Back to My Bookings</a>
+</div></div>
+{% endblock %}

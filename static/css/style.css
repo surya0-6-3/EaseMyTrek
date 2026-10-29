@@ -1,0 +1,18 @@
+/* EaseMyTrek - small custom stylesheet. Bootstrap does most of the work. */
+:root { --forest: #2f6b4f; --forest-dark: #245640; }
+
+body { background-color: #f6f7f6; color: #222; }
+
+.bg-forest { background-color: var(--forest) !important; }
+.text-forest { color: var(--forest) !important; }
+
+.btn-forest { background-color: var(--forest); border-color: var(--forest); color: #fff; }
+.btn-forest:hover, .btn-forest:focus { background-color: var(--forest-dark); border-color: var(--forest-dark); color: #fff; }
+.btn-outline-forest { border-color: var(--forest); color: var(--forest); }
+.btn-outline-forest:hover { background-color: var(--forest); color: #fff; }
+
+.card { border: 1px solid #dde2dd; }
+.stat-number { font-size: 2rem; font-weight: 600; color: var(--forest); }
+.trek-image { height: 150px; object-fit: cover; }
+.chart-img { max-width: 100%; height: auto; }
+

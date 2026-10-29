@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "macros.html" import status_badge, csrf %}
+{% block title %}Manage Bookings{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Manage Bookings</h1>
+
+<form method="get" class="row g-2 mb-3 align-items-end">
+  <div class="col-md-4">
+    <label for="q" class="form-label mb-0">Search user, email or trek</label>
+    <input type="text" class="form-control" id="q" name="q" value="{{ q }}">
+  </div>
+  <div class="col-md-3">
+    <label for="status" class="form-label mb-0">Status</label>
+    <select class="form-select" id="status" name="status">
+      <option value="">All</option>
+      {% for s in statuses %}<option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-forest" type="submit">Filter</button>
+    <a href="{{ url_for('manage_bookings') }}" class="btn btn-outline-secondary">Reset</a>
+  </div>
+</form>
+
+{% if bookings %}
+<div class="table-responsive"><table class="table table-bordered bg-white align-middle">
+  <thead class="table-light">
+    <tr><th>ID</th><th>User</th><th>Email</th><th>Trek</th><th>Trek date</th><th>Participants</th>
+        <th>Total</th><th>Booked on</th><th>Status</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+  {% for b in bookings %}
+    <tr>
+      <td>#{{ b.booking_id }}</td><td>{{ b.user_name }}</td><td>{{ b.user_email }}</td>
+      <td>{{ b.trek_name }}</td><td>{{ b.trek_date }}</td><td>{{ b.participants }}</td>
+      <td>{{ b.total_price|money }}</td><td>{{ b.booking_date }}</td>
+      <td>{{ status_badge(b.status) }}</td>
+      <td class="text-nowrap">
+        {% if b.status == 'Pending' and b.trek_date >= today %}
+        <form method="post" action="{{ url_for('confirm_booking', booking_id=b.booking_id) }}" class="d-inline">
+          {{ csrf() }}<button type="submit" class="btn btn-sm btn-forest">Confirm</button>
+        </form>
+        {% endif %}
+        {% if b.status != 'Cancelled' and b.trek_date > today %}
+        <form method="post" action="{{ url_for('cancel_booking', booking_id=b.booking_id) }}" class="d-inline"
+              onsubmit="return confirm('Cancel booking #{{ b.booking_id }}?');">
+          {{ csrf() }}<button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<div class="alert alert-info">No bookings found.</div>
+{% endif %}
+{% endblock %}

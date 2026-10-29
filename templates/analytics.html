@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Booking Analytics</h1>
+
+<div class="row g-3 mb-3">
+  {% set cards = [
+    ('Total treks', m.total_treks), ('Upcoming treks', m.upcoming_treks),
+    ('Registered users', m.total_users), ('Total booking records', m.total_bookings),
+    ('Active bookings', m.active_bookings), ('Cancelled bookings', m.cancelled_bookings),
+    ('Estimated Booking Value', m.estimated_value|money), ('Cancellation rate', m.cancellation_rate ~ '%'),
+    ('Overall occupancy', m.overall_occupancy ~ '%') ] %}
+  {% for label, value in cards %}
+  <div class="col-6 col-md-4 col-lg-3"><div class="card text-center h-100"><div class="card-body">
+    <div class="stat-number" style="font-size:1.5rem">{{ value }}</div><div>{{ label }}</div>
+  </div></div></div>
+  {% endfor %}
+</div>
+
+<p class="text-muted small">
+  <strong>Estimated Booking Value</strong> = sum of total price of Pending and Confirmed bookings. It is not revenue because
+  no payments are processed. <strong>Cancellation rate</strong> = cancelled booking records &divide; all booking records &times; 100
+  (it counts bookings, not participants). <strong>Occupancy</strong> = active reserved participants &divide; capacity &times; 100.
+</p>
+
+{% if m.inconsistent_treks %}
+<div class="alert alert-danger">Data problem: reserved participants exceed capacity for:
+  {{ m.inconsistent_treks|join(', ') }}.</div>
+{% endif %}
+
+{% if m.total_bookings == 0 %}
+<div class="alert alert-info">There are no bookings yet, so the charts below are empty.</div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-lg-6"><div class="card"><div class="card-body">
+    <img class="chart-img" src="{{ url_for('static', filename='charts/' ~ charts.popular, v=stamp) }}" alt="Most popular treks chart"></div></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-body">
+    <img class="chart-img" src="{{ url_for('static', filename='charts/' ~ charts.occupancy, v=stamp) }}" alt="Occupancy rate chart"></div></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-body">
+    <img class="chart-img" src="{{ url_for('static', filename='charts/' ~ charts.status, v=stamp) }}" alt="Booking status chart"></div></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-body">
+    <img class="chart-img" src="{{ url_for('static', filename='charts/' ~ charts.difficulty, v=stamp) }}" alt="Bookings by difficulty chart"></div></div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} Trek{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">{{ 'Edit Trek' if editing else 'Add New Trek' }}</h1>
+{% if editing %}
+<div class="alert alert-secondary">
+  Currently {{ reserved }} participant(s) are reserved, so capacity cannot go below {{ reserved }}.
+  Changing the price does not change existing bookings.
+</div>
+{% endif %}
+<form method="post" novalidate class="card card-body">
+  {{ csrf() }}
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label for="name" class="form-label">Trek name</label>
+      <input type="text" class="form-control" id="name" name="name" maxlength="100" value="{{ trek.name or '' }}" required>
+    </div>
+    <div class="col-md-6">
+      <label for="location" class="form-label">Location</label>
+      <input type="text" class="form-control" id="location" name="location" maxlength="100" value="{{ trek.location or '' }}" required>
+    </div>
+    <div class="col-12">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control" id="description" name="description" rows="4" required>{{ trek.description or '' }}</textarea>
+    </div>
+    <div class="col-md-3">
+      <label for="difficulty" class="form-label">Difficulty</label>
+      <select class="form-select" id="difficulty" name="difficulty" required>
+        {% for d in difficulties %}<option value="{{ d }}" {% if trek.difficulty == d %}selected{% endif %}>{{ d }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="duration_days" class="form-label">Duration (days)</label>
+      <input type="number" class="form-control" id="duration_days" name="duration_days" min="1" value="{{ trek.duration_days or '' }}" required>
+    </div>
+    <div class="col-md-3">
+      <label for="price" class="form-label">Price per person</label>
+      <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" value="{{ trek.price if trek.price is not none else '' }}" required>
+    </div>
+    <div class="col-md-3">
+      <label for="capacity" class="form-label">Capacity</label>
+      <input type="number" class="form-control" id="capacity" name="capacity" min="1" value="{{ trek.capacity or '' }}" required>
+    </div>
+    <div class="col-md-4">
+      <label for="trek_date" class="form-label">Trek date</label>
+      <input type="date" class="form-control" id="trek_date" name="trek_date" value="{{ trek.trek_date or '' }}" required>
+    </div>
+    <div class="col-md-8">
+      <label for="image_url" class="form-label">Image URL (optional)</label>
+      <input type="url" class="form-control" id="image_url" name="image_url" value="{{ trek.image_url or '' }}">
+    </div>
+  </div>
+  <div class="mt-3">
+    <button type="submit" class="btn btn-forest">{{ 'Save Changes' if editing else 'Add Trek' }}</button>
+    <a href="{{ url_for('manage_treks') }}" class="btn btn-outline-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

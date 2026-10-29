@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "macros.html" import status_badge %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Administrator Dashboard</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card text-center"><div class="card-body">
+    <div class="stat-number">{{ stats.treks }}</div><div>Total treks</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card text-center"><div class="card-body">
+    <div class="stat-number">{{ stats.users }}</div><div>Registered users</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card text-center"><div class="card-body">
+    <div class="stat-number">{{ stats.active }}</div><div>Active bookings</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card text-center"><div class="card-body">
+    <div class="stat-number">{{ stats.pending }}</div><div>Pending bookings</div></div></div></div>
+</div>
+
+<div class="mb-4">
+  <a href="{{ url_for('manage_treks') }}" class="btn btn-outline-forest">Manage Treks</a>
+  <a href="{{ url_for('manage_bookings') }}" class="btn btn-outline-forest">Manage Bookings</a>
+  <a href="{{ url_for('analytics_page') }}" class="btn btn-outline-forest">Analytics</a>
+</div>
+
+<h2 class="h5">Recent Bookings</h2>
+{% if recent %}
+<div class="table-responsive"><table class="table table-bordered bg-white align-middle">
+  <thead class="table-light"><tr><th>ID</th><th>User</th><th>Trek</th><th>Participants</th><th>Total</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for b in recent %}
+    <tr><td>#{{ b.booking_id }}</td><td>{{ b.user_name }}</td><td>{{ b.trek_name }}</td>
+        <td>{{ b.participants }}</td><td>{{ b.total_price|money }}</td><td>{{ status_badge(b.status) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}
+<div class="alert alert-info">No bookings have been made yet.</div>
+{% endif %}
+{% endblock %}

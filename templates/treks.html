@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% from "macros.html" import difficulty_badge %}
+{% block title %}Explore Treks{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Explore Treks</h1>
+
+<form method="get" class="card card-body mb-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label for="q" class="form-label">Search name or location</label>
+      <input type="text" class="form-control" id="q" name="q" value="{{ q }}">
+    </div>
+    <div class="col-md-2">
+      <label for="difficulty" class="form-label">Difficulty</label>
+      <select class="form-select" id="difficulty" name="difficulty">
+        <option value="">All</option>
+        {% for d in difficulties %}<option value="{{ d }}" {% if d == difficulty %}selected{% endif %}>{{ d }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="max_price" class="form-label">Max price</label>
+      <input type="number" min="0" step="any" class="form-control" id="max_price" name="max_price" value="{{ max_price }}">
+    </div>
+    <div class="col-md-2">
+      <label for="sort" class="form-label">Sort by</label>
+      <select class="form-select" id="sort" name="sort">
+        <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+        <option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>Price: low to high</option>
+        <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>Price: high to low</option>
+      </select>
+    </div>
+    <div class="col-md-2 d-flex gap-2">
+      <button type="submit" class="btn btn-forest">Filter</button>
+      <a href="{{ url_for('treks') }}" class="btn btn-outline-secondary">Reset</a>
+    </div>
+  </div>
+</form>
+
+{% if treks %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+  {% for trek in treks %}
+  <div class="col">
+    <div class="card h-100">
+      {% if trek.image_url %}<img src="{{ trek.image_url }}" class="card-img-top trek-image" alt="{{ trek.name }}">{% endif %}
+      <div class="card-body">
+        <h2 class="h5 card-title">{{ trek.name }}</h2>
+        <p class="text-muted mb-2">{{ trek.location }}</p>
+        <ul class="list-unstyled mb-3">
+          <li>Difficulty: {{ difficulty_badge(trek.difficulty) }}</li>
+          <li>Duration: {{ trek.duration_days }} day(s)</li>
+          <li>Date: {{ trek.trek_date }}</li>
+          <li>Price: {{ trek.price|money }} per person</li>
+          <li>Available slots:
+            {% if trek.available > 0 %}{{ trek.available }} of {{ trek.capacity }}
+            {% else %}<span class="text-danger">Full</span>{% endif %}</li>
+        </ul>
+        <a href="{{ url_for('trek_details', trek_id=trek.trek_id) }}" class="btn btn-sm btn-outline-forest">View Details</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">No treks match your search. Try changing or resetting the filters.</div>
+{% endif %}
+{% endblock %}
